@@ -28,3 +28,6 @@ git.properties
 
 # IntelliJ IDEA folder 
 .idea/
+
+# Text files
+*.txt
