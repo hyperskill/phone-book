@@ -55,7 +55,7 @@ public class Main {
 
   private static void bubbleSort(List<Contact> contacts) {
     for (int i = 0; i < contacts.size(); i++) {
-      for (int j = i + 1; j < contacts.size(); j++) {
+      for (int j = contacts.size() - 1; j > i; j--) {
         if (contacts.get(j).getName().compareTo(contacts.get(j - 1).getName()) < 0) {
           Collections.swap(contacts, j, j - 1);
         }
