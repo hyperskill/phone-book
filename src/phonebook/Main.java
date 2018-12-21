@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,6 +16,8 @@ public class Main {
 
   public static void main(String[] args) throws IOException {
     List<Contact> contacts = parseContacts();
+    bubbleSort(contacts);
+
     List<String> requests = Files.readAllLines(Paths.get(FIND_REQUESTS_DIRECTORY));
 
     long start = System.currentTimeMillis();
@@ -51,11 +53,20 @@ public class Main {
     return null;
   }
 
+  private static void bubbleSort(List<Contact> contacts) {
+    for (int i = 0; i < contacts.size(); i++) {
+      for (int j = i + 1; j < contacts.size(); j++) {
+        if (contacts.get(j).getName().compareTo(contacts.get(j - 1).getName()) < 0) {
+          Collections.swap(contacts, j, j - 1);
+        }
+      }
+    }
+  }
+
   private static List<Contact> parseContacts() throws IOException {
     Stream<String> directoryLines = Files.lines(Paths.get(CONTACT_DATA_DIRECTORY));
     return directoryLines.map(line -> new Contact(line.substring(0, line.indexOf(" ")),
         line.substring(line.indexOf(" ") + 1)))
-        .sorted(Comparator.comparing(Contact::getName))
         .collect(Collectors.toCollection(ArrayList::new));
   }
 }
