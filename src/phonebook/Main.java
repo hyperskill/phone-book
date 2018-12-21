@@ -19,10 +19,11 @@ public class Main {
     List<String> requests = Files.readAllLines(Paths.get(FIND_REQUESTS_DIRECTORY));
 
     long start = System.currentTimeMillis();
+    int cnt = 1;
     for (String request : requests) {
       Contact contact;
       if ((contact = search(contacts, request)) != null) {
-        System.out.printf("%s has number %s\n", request, contact.getNumber());
+        System.out.printf("%d. %s has number %s\n", cnt++, request, contact.getNumber());
       }
     }
     System.out.printf("To find all entries it taken %d ms\n", System.currentTimeMillis() - start);
