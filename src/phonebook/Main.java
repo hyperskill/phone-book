@@ -16,7 +16,7 @@ public class Main {
 
   public static void main(String[] args) throws IOException {
     List<Contact> contacts = parseContacts();
-    bubbleSort(contacts);
+    quickSort(contacts);
 
     List<String> requests = Files.readAllLines(Paths.get(FIND_REQUESTS_DIRECTORY));
 
@@ -32,35 +32,45 @@ public class Main {
   }
 
   private static Contact search(List<Contact> contacts, String name) {
-    int sqr = (int) Math.sqrt(contacts.size());
-    int lo = 0, hi = Math.min(sqr, contacts.size() - 1);
-    while (lo < hi) {
-      Contact contact = contacts.get(hi);
+    int lo = 0, hi = contacts.size() - 1;
+    while (lo <= hi) {
+      int mid = lo + (hi - lo) / 2;
+      Contact contact = contacts.get(mid);
       if (contact.getName().compareTo(name) == 0) {
         return contact;
       } else if (contact.getName().compareTo(name) < 0) {
-        lo = hi + 1;
-        hi = Math.min(hi + sqr + 1, contacts.size() - 1);
+        lo = mid + 1;
       } else {
-        for (int i = hi; i >= lo; i--) {
-          if (contacts.get(i).getName().compareTo(name) == 0) {
-            return contact;
-          }
-        }
-        return null;
+        hi = mid - 1;
       }
     }
     return null;
   }
 
-  private static void bubbleSort(List<Contact> contacts) {
-    for (int i = 0; i < contacts.size(); i++) {
-      for (int j = contacts.size() - 1; j > i; j--) {
-        if (contacts.get(j).getName().compareTo(contacts.get(j - 1).getName()) < 0) {
-          Collections.swap(contacts, j, j - 1);
-        }
+  private static void quickSort(List<Contact> contacts) {
+    quickSort(contacts, 0, contacts.size() - 1);
+  }
+
+  private static void quickSort(List<Contact> contacts, int lo, int hi) {
+    if (lo >= hi) {
+      return;
+    }
+    int p = pivot(contacts, lo, hi);
+    quickSort(contacts, lo, p - 1);
+    quickSort(contacts, p + 1, hi);
+  }
+
+  private static int pivot(List<Contact> contacts, int lo, int hi) {
+    Contact pivot = contacts.get(lo);
+    int j = lo + 1;
+    for (int i = lo + 1; i <= hi; i++) {
+      if (pivot.getName().compareTo(contacts.get(i).getName()) >= 0) {
+        Collections.swap(contacts, i, j);
+        j++;
       }
     }
+    Collections.swap(contacts, lo, j - 1);
+    return j - 1;
   }
 
   private static List<Contact> parseContacts() throws IOException {
