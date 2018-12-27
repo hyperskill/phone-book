@@ -5,14 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
 
-  static final String CONTACT_DATA_DIRECTORY = "data/directory.txt";
-  static final String FIND_REQUESTS_DIRECTORY = "data/find.txt";
+  private static final String CONTACT_DATA_DIRECTORY = "data/directory.txt";
+  private static final String FIND_REQUESTS_DIRECTORY = "data/find.txt";
 
   public static void main(String[] args) throws IOException {
     List<Contact> contacts = parseContacts();
@@ -23,8 +25,8 @@ public class Main {
     long start = System.currentTimeMillis();
     int cnt = 1;
     for (String request : requests) {
-      Contact contact;
-      if ((contact = search(contacts, request)) != null) {
+      Contact contact = search(contacts, request);
+      if ((Objects.nonNull(contact))) {
         System.out.printf("%d. %s has number %s\n", cnt++, request, contact.getNumber());
       }
     }
@@ -36,9 +38,10 @@ public class Main {
     while (lo <= hi) {
       int mid = lo + (hi - lo) / 2;
       Contact contact = contacts.get(mid);
-      if (contact.getName().compareTo(name) == 0) {
+      int comparing = Objects.compare(contact.getName(), name, Comparator.naturalOrder());
+      if (comparing == 0) {
         return contact;
-      } else if (contact.getName().compareTo(name) < 0) {
+      } else if (comparing < 0) {
         lo = mid + 1;
       } else {
         hi = mid - 1;
@@ -64,7 +67,9 @@ public class Main {
     Contact pivot = contacts.get(lo);
     int j = lo + 1;
     for (int i = lo + 1; i <= hi; i++) {
-      if (pivot.getName().compareTo(contacts.get(i).getName()) >= 0) {
+      int comparing = Objects
+          .compare(pivot, contacts.get(i), Comparator.comparing(Contact::getName));
+      if (comparing >= 0) {
         Collections.swap(contacts, i, j);
         j++;
       }
