@@ -2,8 +2,8 @@ package phonebook;
 
 public class Contact {
 
-  private String number;
-  private String name;
+  private final String number;
+  private final String name;
 
   public Contact(String number, String name) {
     this.number = number;
